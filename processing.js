@@ -1454,7 +1454,31 @@ function buildProcessing( curElement ){
         p.loop();
       }
     }
+
+    attach( curElement, "touchmove", function(e) {
+      var scrollX = window.scrollX != null ? window.scrollX : window.pageXOffset;
+      var scrollY = window.scrollY != null ? window.scrollY : window.pageYOffset;
+      p.pmouseX = p.mouseX;
+      p.pmouseY = p.mouseY;
+      p.mouseX = e.targetTouches[0].pageX - curElement.offsetLeft + scrollX;
+      p.mouseY = e.targetTouches[0].pageY - curElement.offsetTop + scrollY;
+      e.preventDefault();
+      
+      if ( p.mouseMoved ) {
+        p.mouseMoved();
+      }
     
+    if ( mousePressed && p.mouseDragged ) {
+      p.mouseDragged();
+    }
+    });
+    
+    /**
+    * remove mousemove event.
+    * only works on iPhone when fingerDown, fingerUp
+    * when element has mousemove, mouseup, mousedown or click event
+    * iPhones Safari displays an ugly grey overlay and "Action" bubble
+    *
     attach( curElement, "mousemove", function(e) {
       var scrollX = window.scrollX != null ? window.scrollX : window.pageXOffset;
       var scrollY = window.scrollY != null ? window.scrollY : window.pageYOffset;
@@ -1471,7 +1495,11 @@ function buildProcessing( curElement ){
         p.mouseDragged();
       }      
     });
-    
+    */
+
+    /**
+    * remove mousedown event.
+    * may be replaced with touchstart ?
     attach( curElement, "mousedown", function(e) {
       mousePressed = true;
       p.mouseButton = e.which;
@@ -1482,12 +1510,15 @@ function buildProcessing( curElement ){
         p.mousePressed = true;
       }
     });
-
+    */
     attach( curElement, "contextmenu", function(e) {
       e.preventDefault();
       e.stopPropagation();
     });
 
+    /**
+    * remove mouseup event.
+    * may be replaced with touchend ?
     attach( curElement, "mouseup", function(e) {
       mousePressed = false;
 
@@ -1499,6 +1530,7 @@ function buildProcessing( curElement ){
         p.mouseReleased();
       }
     });
+    */
 
     attach( document, "keydown", function(e) {
       keyPressed = true;
